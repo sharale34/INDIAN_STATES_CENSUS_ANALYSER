@@ -3,7 +3,7 @@ package com.bridgelabz.censusanalyser;
 @SuppressWarnings("serial")
 public class CensusAnalyserException extends Exception {
 	enum ExceptionType {
-		CENSUS_FILE_EXCEPTION
+		CENSUS_FILE_EXCEPTION, CODE_FILE_EXCEPTION
 	}
 
 	ExceptionType type;

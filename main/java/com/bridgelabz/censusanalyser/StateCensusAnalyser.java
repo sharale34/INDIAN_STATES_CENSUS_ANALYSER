@@ -1,41 +1,51 @@
 package com.bridgelabz.censusanalyser;
 
-import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Iterator;
+import java.io.*;
+import java.util.*;
+import java.nio.file.*;
+import com.opencsv.bean.*;
 import java.util.logging.Logger;
-
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
+import java.util.stream.StreamSupport;
 
 public class StateCensusAnalyser {
-
 	public static void main(String[] args) {
 		Logger log = Logger.getLogger(StateCensusAnalyser.class.getName());
 		log.info("Welcome to the Indian States Census Analyser Problem.");
 	}
 
-	public int readCensusData(String csvFilePath) throws CensusAnalyserException {
+	public int readCensusData(String csvCensusFilePath) throws CensusAnalyserException {
 		try {
-			//Abstract class for reading character streams
-			Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));
-			//This class makes it possible to bypass all the intermediate steps and classes in setting up to read from a CSV source to a list of beans. 
+			Reader reader = Files.newBufferedReader(Paths.get(csvCensusFilePath));
 			CsvToBeanBuilder<CSVStateCensus> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
 			csvToBeanBuilder.withType(CSVStateCensus.class);
 			csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
-			//Converts CSV data to objects
 			CsvToBean<CSVStateCensus> csvToBean = csvToBeanBuilder.build();
 			Iterator<CSVStateCensus> censusCSVIterator = csvToBean.iterator();
 			int numOfEntries = 0;
-			while (censusCSVIterator.hasNext()) {
-				numOfEntries++;
-				censusCSVIterator.next();
-			}
+			Iterable<CSVStateCensus> csvIterable = () -> censusCSVIterator;
+			numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
 			return numOfEntries;
 		} catch (Exception e) {
 			throw new CensusAnalyserException(e.getMessage(),
 					CensusAnalyserException.ExceptionType.CENSUS_FILE_EXCEPTION);
+		}
+	}
+
+	public int readCodeData(String csvCodeFilePath) throws CensusAnalyserException {
+		try {
+			Reader reader = Files.newBufferedReader(Paths.get(csvCodeFilePath));
+			CsvToBeanBuilder<CSVStates> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
+			csvToBeanBuilder.withType(CSVStates.class);
+			csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
+			CsvToBean<CSVStates> csvToBean = csvToBeanBuilder.build();
+			Iterator<CSVStates> codeCSVIterator = csvToBean.iterator();
+			int numOfEntries = 0;
+			Iterable<CSVStates> csvIterable = () -> codeCSVIterator;
+			numOfEntries = (int) StreamSupport.stream(csvIterable.spliterator(), false).count();
+			return numOfEntries;
+		} catch (Exception e) {
+			throw new CensusAnalyserException(e.getMessage(),
+					CensusAnalyserException.ExceptionType.CODE_FILE_EXCEPTION);
 		}
 	}
 }
