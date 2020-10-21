@@ -8,6 +8,7 @@ public class StateCodeAnalyserTest {
 	private static final String CODE_CSV_FILE_PATH = "C:\\Users\\SOURABH HARALE\\eclipse-workspace\\censusanalyser\\src\\test\\resources\\IndiaStateCode.csv";
 	private static final String WRONG_CODE_CSV_FILE_PATH = "C:\\Users\\SOURABH HARALE\\eclipse-workspace\\censusanalyser\\src\\test\\IndiaStateCode.csv";
 	private static final String WRONG_CODE_CSV_FILE_TYPE = "C:\\Users\\SOURABH HARALE\\eclipse-workspace\\censusanalyser\\src\\test\\IndiaStateCode.java";
+	private static final String WRONG_CODE_DELIMITER = "C:\\Users\\SOURABH HARALE\\eclipse-workspace\\censusanalyser\\src\\test\\resources\\StateCodeWrongDelimiter.csv";
 
 	@Test
 	public void givenIndianCodeCSVFile_ShouldReturnCorrectNumberOfRecordTest() {
@@ -38,6 +39,18 @@ public class StateCodeAnalyserTest {
 			ExpectedException exceptionRule = ExpectedException.none();
 			exceptionRule.expect(CensusAnalyserException.class);
 			codeAnalyser.readCodeData(WRONG_CODE_CSV_FILE_TYPE);
+		} catch (CensusAnalyserException e) {
+			Assert.assertEquals(CensusAnalyserException.ExceptionType.CODE_FILE_EXCEPTION, e.type);
+		}
+	}
+	
+	@Test
+	public void givenWrongDelimiterIndianCodeCSVFile_ShouldReturnCustomExceptionTest()  {
+		try {
+			StateCensusAnalyser codeAnalyser = new StateCensusAnalyser();
+			ExpectedException exceptionRule = ExpectedException.none();
+			exceptionRule.expect(CensusAnalyserException.class);
+			codeAnalyser.readCodeData(WRONG_CODE_DELIMITER);
 		} catch (CensusAnalyserException e) {
 			Assert.assertEquals(CensusAnalyserException.ExceptionType.CODE_FILE_EXCEPTION, e.type);
 		}
